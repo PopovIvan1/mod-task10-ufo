@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using static System.Math;
 using System.Drawing.Drawing2D;
@@ -104,6 +105,48 @@ namespace WindowsFormsApp8
                     error = Abs(x1 - x2) + Abs(y1 - y2);
                 }
             }
+            g.Restore(gs);
+            Thread.Sleep(2000);
+            g.Clear(Color.White);
+            g.DrawLine(new Pen(Color.Black, 2), 100, 400, 100, 0);
+            g.DrawLine(new Pen(Color.Black, 2), 100, 400, 600, 400);
+            for (int i = 0; i < 5; i++)
+            {
+                g.DrawLine(new Pen(Color.Black, 2), 90, 400 - (i + 1) * 100, 110, 400 - (i + 1) * 100);
+                g.DrawLine(new Pen(Color.Black, 2), 100 + (i + 1) * 100, 390, 100 + (i + 1) * 100, 410);
+            }
+            g.DrawEllipse(new Pen(Color.Black, 2), 200, 10, 2, 2);
+            double old_x = 200;
+            double old_y = 10;
+            for (int j = 1; j < 6; j++)
+            {
+                degree = j;
+                x1 = 20;
+                y1 = 30;
+                error = Abs(x1 - x2) + Abs(y1 - y2);
+                angle = arctan((y2 - y1) / (x1 - x2), degree);
+                while (true)
+                {
+                    y1 -= step * sin(angle, degree);
+                    x1 += step * cos(angle, degree);
+                    if (Abs(x1 - x2) + Abs(y1 - y2) > error)
+                    {
+                        if (j != 1) 
+                        {
+                            g.DrawLine(pen, (float)old_x, (float)old_y, 100 + 100 * j, 400 - (float)error * 100);
+                            old_x = 100 + 100 * j;
+                            old_y = 400 - error * 100;
+                            g.DrawEllipse(new Pen(Color.Black, 2), 100 + 100 * j, 400 - (float)error * 100, 2, 2);
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        error = Abs(x1 - x2) + Abs(y1 - y2);
+                    }
+                }
+            }
+            gs = g.Save();
             g.Restore(gs);
         }
     }
